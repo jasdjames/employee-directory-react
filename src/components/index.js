@@ -1,2 +1,2 @@
 export { NavBar } from './NavBar';
-export { Table } from './Table';
+export { TableBody } from './TableBody';
