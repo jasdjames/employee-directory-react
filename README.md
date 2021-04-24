@@ -22,6 +22,8 @@ This project is deployed so it will work by clicking the link, then clicking the
 ## Usage
 
 This project can be accesses at the link and Github repo below.
+[Deployed](https://condescending-nobel-29ef6b.netlify.app/)
+[Repo](https://github.com/jasdjames/employee-directory-react)
 
 ## Contributing
 
