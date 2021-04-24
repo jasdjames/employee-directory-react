@@ -1,31 +1,20 @@
 import { useEffect, useState } from 'react';
-// import { API } from './data/API';
-import { NavBar } from './components';
 import SearchField from './components/Search';
-// import userList from './data/userList.json';
 import Axios from 'axios';
-
-// const handleSearch = async () => {
-//   const results = await API.search(search);
-//   const { userData } = await results.json();
-//   setItems([...userData]);
-// };
+import { Header } from './components/Header';
 
 export const App = () => {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
-  const [search, setSearch] = useState();
+  // const [search, setSearch] = useState();
   const [searchTopic, setSearchTopic] = useState('name');
 
   const handleSearch = ({ target }) => {
     const { value } = target;
-    console.log('what wer r typing', value);
 
     var newFilteredPpl = [];
 
     for (let i = 0; i < users.length; i++) {
-      console.log('Letter to compare', users[i].name.first.substring(0, 1));
-
       if (searchTopic === 'dob') {
         if (
           value.toLowerCase() ===
@@ -40,25 +29,30 @@ export const App = () => {
         ) {
           newFilteredPpl.push(users[i]);
         }
+      } else if (searchTopic === 'email') {
+        if (
+          value.toLowerCase() ===
+          users[i].email.substring(0, value.length).toLowerCase()
+        ) {
+          newFilteredPpl.push(users[i]);
+        }
+      } else if (searchTopic === 'phone') {
+        if (
+          value.toLowerCase() ===
+          users[i].cell.substring(0, value.length).toLowerCase()
+        ) {
+          newFilteredPpl.push(users[i]);
+        }
       }
     }
-    console.log('new filtered ppl', newFilteredPpl);
+
     setFilteredUsers(newFilteredPpl);
-    // setSearch(value);
-    // if (!search) setUsers(users);
-    // else {
-    //   const filteredUsers = users.filter((user) => {
-    //     return user.name.includes(value) || user.email.includes(value);
-    //   });
-    //   setUsers(filteredUsers);
-    // }
   };
 
   useEffect(() => {
     Axios.get('https://randomuser.me/api/?results=50&nat=us').then(function (
       ppl
     ) {
-      console.log('ppl', ppl);
       setUsers(ppl.data.results);
     });
   }, []);
@@ -66,24 +60,6 @@ export const App = () => {
   const searchTopicClick = (topic) => {
     setSearchTopic(topic);
   };
-  // const handleSearch = async ({ target }) => {
-  //   const results = await API.search(search);
-  //   const { userData } = await results.json();
-  //   const { value } = target;
-  //   setUsers([...userData]);
-  //   setSearch(value);
-
-  //   if (!search) setUsers(userData);
-  //   else {
-  //     const filterUserData = userData.filter((user) => {
-  //       return user.results.name.includes(value) || user.email.includes(value);
-  //     });
-  //     setUsers(filterUserData);
-  //   }
-  // };
-  console.log(' USER STATE', users);
-  console.log(' FILTERED USER STATE', filteredUsers);
-  console.log(' SERAFCH TOPIC STATE', searchTopic);
 
   var pplToDisplay = users;
   if (filteredUsers.length > 0) {
@@ -94,53 +70,78 @@ export const App = () => {
 
   var dobStyle = searchTopic === 'dob' ? 'text-warning' : '';
 
+  var emailStyle = searchTopic === 'email' ? 'text-warning' : '';
+
+  var phoneStyle = searchTopic === 'phone' ? 'text-warning' : '';
+
   return (
     <>
       <div className="App">
-        <h1 className="text-center text-success m-3">Employee Directory </h1>
-      </div>
-      <div className="text-center"> Header </div>
-      <div>
+        <Header />
         <SearchField handleSearch={handleSearch} />
       </div>
-      <table className="table table-striped table-dark">
-        <thead>
-          <tr>
-            <th scope="col">Image</th>
-            <th
-              scope="col"
-              onClick={() => {
-                searchTopicClick('name');
-              }}
-              className={nameStyle}
-            >
-              Name
-            </th>
-            <th scope="col">Phone</th>
-            <th scope="col">Email</th>
-            <th
-              scope="col"
-              onClick={() => {
-                searchTopicClick('dob');
-              }}
-              className={dobStyle}
-            >
-              DOB
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {pplToDisplay.map((user, i) => (
-            <tr key={i}>
-              <th scope="row" key={user.uuid}></th>
-              <td>{user.name.first + ' ' + user.name.last}</td>
-              <td>{user.cell}</td>
-              <td>{user.email}</td>
-              <td>{user.dob.date}</td>
+      <div className="d-flex justify-content-center container bg-dark ">
+        <table className="table table-striped table-dark">
+          <thead>
+            <tr>
+              <th scope="col">Image</th>
+              <th
+                scope="col"
+                onClick={() => {
+                  searchTopicClick('name');
+                }}
+                className={nameStyle}
+              >
+                Name
+              </th>
+              <th
+                scope="col"
+                onClick={() => {
+                  searchTopicClick('phone');
+                }}
+                className={phoneStyle}
+              >
+                Phone
+              </th>
+              <th
+                scope="col"
+                onClick={() => {
+                  searchTopicClick('email');
+                }}
+                className={emailStyle}
+              >
+                Email
+              </th>
+              <th
+                scope="col"
+                onClick={() => {
+                  searchTopicClick('dob');
+                }}
+                className={dobStyle}
+              >
+                DOB
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {pplToDisplay.map((user, i) => (
+              <tr key={i}>
+                <th scope="row">
+                  <img
+                    className="img-thumbnail"
+                    src={user.picture.medium}
+                    alt="employee on row"
+                  />
+                </th>
+                <td>{user.name.first + ' ' + user.name.last}</td>
+                <td>{user.cell}</td>
+                <td>{user.email}</td>
+                <td>{user.dob.date}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </>
   );
 };
