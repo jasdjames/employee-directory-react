@@ -71,7 +71,7 @@ export const NavBar = () => {
             </li>
           </ul>
 
-          <SearchField />
+          {/* <SearchField /> */}
         </div>
       </nav>
     </>
